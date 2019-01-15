@@ -93,18 +93,6 @@ class MainActivity : AppCompatActivity() {
                 course.addOwner(ownerId)
                 courseRef.document(courseId).set(course)
             }
-        
-        val boutell = Owner("boutell")
-        boutell.addCourse(idFromName("CSSE483"))
-        boutell.addCourse(idFromName("CSSE479"))
-        ownerRef.add(boutell)
-
-        // Owners and courses are 2-way, so if Boutell is an owner of 479,
-        // we must record it in the owner (done above) and in the course:
-        val csse479 = courseFromName("CSSE479")
-        csse479.addOwner("boutell")
-        courseRef.document(idFromName("CSSE479")).set(csse479)
-
     }
 
     fun getCoursesForOwner(ownerName: String) {
