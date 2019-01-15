@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.navigation_notifications -> {
                 // TODO: Use deep query.
-                // TODO: Also add owner (must be both way)
+                // TODO (later): Also add owner (must be both way)
                 getCoursesForOwner2("boutell")
                 return@OnNavigationItemSelectedListener true
             }
@@ -78,6 +78,33 @@ class MainActivity : AppCompatActivity() {
                 var assignments = snapshot.toObjects(Student::class.java)
                 message.text = assignments.toString()
             }
+    }
+
+    private fun addOwnerForCourse(ownerId: String, courseId: String) {
+        ownerRef.document(ownerId).get()
+            .addOnSuccessListener { snapshot: DocumentSnapshot ->
+                val owner = Owner.fromSnapshot(snapshot)
+                owner.addCourse(courseId)
+                ownerRef.document(ownerId).set(owner)
+            }
+        courseRef.document(courseId).get()
+            .addOnSuccessListener { snapshot: DocumentSnapshot ->
+                val course = Course.fromSnapshot(snapshot)
+                course.addOwner(ownerId)
+                courseRef.document(courseId).set(course)
+            }
+        
+        val boutell = Owner("boutell")
+        boutell.addCourse(idFromName("CSSE483"))
+        boutell.addCourse(idFromName("CSSE479"))
+        ownerRef.add(boutell)
+
+        // Owners and courses are 2-way, so if Boutell is an owner of 479,
+        // we must record it in the owner (done above) and in the course:
+        val csse479 = courseFromName("CSSE479")
+        csse479.addOwner("boutell")
+        courseRef.document(idFromName("CSSE479")).set(csse479)
+
     }
 
     fun getCoursesForOwner(ownerName: String) {
