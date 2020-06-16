@@ -1,8 +1,8 @@
 package edu.rosehulman.graderecorder
 
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
-import android.support.v7.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -80,21 +80,6 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    private fun addOwnerForCourse(ownerId: String, courseId: String) {
-        ownerRef.document(ownerId).get()
-            .addOnSuccessListener { snapshot: DocumentSnapshot ->
-                val owner = Owner.fromSnapshot(snapshot)
-                owner.addCourse(courseId)
-                ownerRef.document(ownerId).set(owner)
-            }
-        courseRef.document(courseId).get()
-            .addOnSuccessListener { snapshot: DocumentSnapshot ->
-                val course = Course.fromSnapshot(snapshot)
-                course.addOwner(ownerId)
-                courseRef.document(courseId).set(course)
-            }
-    }
-
     fun getCoursesForOwner(ownerName: String) {
         var path = FieldPath.of("owners", ownerName)
         courseRef.whereEqualTo(path, true).get()
@@ -123,6 +108,22 @@ class MainActivity : AppCompatActivity() {
 //                }
 //                // How will we know when all have been loaded?
 //            }
+    }
+
+
+    private fun addOwnerForCourse(ownerId: String, courseId: String) {
+        ownerRef.document(ownerId).get()
+            .addOnSuccessListener { snapshot: DocumentSnapshot ->
+                val owner = Owner.fromSnapshot(snapshot)
+                owner.addCourse(courseId)
+                ownerRef.document(ownerId).set(owner)
+            }
+        courseRef.document(courseId).get()
+            .addOnSuccessListener { snapshot: DocumentSnapshot ->
+                val course = Course.fromSnapshot(snapshot)
+                course.addOwner(ownerId)
+                courseRef.document(courseId).set(course)
+            }
     }
 
     // How do we calculate this?
